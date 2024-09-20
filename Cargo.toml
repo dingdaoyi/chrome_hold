@@ -1,0 +1,15 @@
+[package]
+name = "chrome_hold"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+dotenv = "0.15"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+serde_json = { version = "1" }
+pnet = "0.35.0"
+axum = { version = "0.7", features = ["macros"] }
+serde = { version = "1.0.210", features = ["derive"] }
