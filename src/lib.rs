@@ -133,7 +133,7 @@ fn start_chrome() {
     #[cfg(target_os = "windows")]
     {
         let output = Command::new("cmd")
-            .args(&["/C", "start chrome"])
+            .args(&["start chrome"])
             .output();
 
         match output {
