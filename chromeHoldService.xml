@@ -1,6 +1,6 @@
 <service>
     <id>chromeHold</id>
-    <name>chrome_hold</name>
+    <name>浏览器自动重启服务</name>
     <description>浏览器自动重启服务</description>
 
     <!-- 可执行文件路径 -->
