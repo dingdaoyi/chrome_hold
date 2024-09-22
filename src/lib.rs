@@ -6,7 +6,7 @@ use std::time::Duration;
 use axum::extract::State;
 use axum::Router;
 use axum::routing::get;
-
+use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
@@ -108,6 +108,8 @@ fn close_chrome() {
     }
 }
 
+
+
 fn start_chrome() {
     #[cfg(target_os = "macos")]
     {
@@ -132,8 +134,11 @@ fn start_chrome() {
 
     #[cfg(target_os = "windows")]
     {
+        let current_dir = env::current_exe().expect("Failed to get current exe path");
+        let mut script_path = PathBuf::from(current_dir.parent().expect("Failed to get parent directory"));
+        script_path.push("start_bat.bat");
         let output = Command::new("cmd")
-            .args(&["start chrome"])
+            .args(&["/C", script_path.to_str().expect("Invalid script path")])
             .output();
 
         match output {
