@@ -193,7 +193,7 @@ fn start_chrome() {
             }
         }
     }
-    // #[cfg(target_os = "linux")]
+    #[cfg(target_os = "linux")]
     {
         let child = Command::new("google-chrome")
             .spawn();
