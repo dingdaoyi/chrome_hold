@@ -1,20 +1,15 @@
 use std::env;
 use std::error::Error;
-use std::fs::File;
 use std::process::Command;
 use std::sync::OnceLock;
 use std::time::Duration;
-use axum::extract::State;
 use axum::Router;
 use axum::routing::get;
-use std::path::{Path, PathBuf};
-use serde::{Deserialize, Serialize};
+use std::path:: PathBuf;
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
 use tokio::time::{Instant, sleep};
 use tracing::info;
-use tracing::log::LevelFilter;
-use tracing_subscriber::filter::Builder;
 use tracing_appender::rolling::{RollingFileAppender, Rotation};
 
 static AUTH_CONFIG: OnceLock<Sender<Instant>> = OnceLock::new();
@@ -106,7 +101,7 @@ fn close_chrome() {
                     info!("关闭失败");
                 }
             }
-            Err(msg) => {}
+            Err(_msg) => {}
         }
     }
 
@@ -148,11 +143,11 @@ fn start_chrome() {
         }
     }
 
-    #[cfg(target_os = "windows")]
+    // #[cfg(target_os = "windows")]
     {
         let mut script_path = get_exe_path();
         script_path.push("start_bat.bat");
-        info!("脚本路径为:{}",&script_path);
+        info!("脚本路径为:{:?}",&script_path);
         let output = Command::new("cmd")
             .args(&["/C", script_path.to_str().expect("Invalid script path")])
             .output();
