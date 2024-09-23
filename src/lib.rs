@@ -143,7 +143,7 @@ fn start_chrome() {
         }
     }
 
-    // #[cfg(target_os = "windows")]
+    #[cfg(target_os = "windows")]
     {
         let mut script_path = get_exe_path();
         script_path.push("start_bat.bat");
