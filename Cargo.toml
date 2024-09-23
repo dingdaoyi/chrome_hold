@@ -1,5 +1,6 @@
 [package]
-name = "chrome_hold"
+#linux中名称问题,需要避免chrome
+name = "hrome_hold"
 version = "0.1.0"
 edition = "2021"
 
@@ -12,3 +13,4 @@ tracing-appender="0.2"
 serde_json = { version = "1" }
 axum = { version = "0.7", features = ["macros"] }
 serde = { version = "1.0.210", features = ["derive"] }
+tower-http = { version = "0.6", features = ["cors"] }

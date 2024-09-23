@@ -6,11 +6,13 @@ use std::time::Duration;
 use axum::Router;
 use axum::routing::get;
 use std::path:: PathBuf;
+use axum::http::Method;
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
 use tokio::time::{Instant, sleep};
 use tracing::info;
 use tracing_appender::rolling::{RollingFileAppender, Rotation};
+use tower_http::cors::{Any, CorsLayer};
 
 static AUTH_CONFIG: OnceLock<Sender<Instant>> = OnceLock::new();
 
@@ -48,8 +50,12 @@ pub async fn start() -> Result<(), Box<dyn Error>> {
             }
         }
     });
+    let cors = CorsLayer::new()
+        .allow_origin(Any) // 或者设置为特定的 origin
+        .allow_methods(vec![Method::GET,Method::POST,Method::OPTIONS]);
     axum::serve(listener, Router::new()
-        .route("/ping", get(ping))).await?;
+        .route("/ping", get(ping))
+        .layer(cors)).await?;
 
     Ok(())
 }
@@ -71,16 +77,25 @@ async fn ping() -> String {
 
 
 async fn setup_logger() -> Result<(), Box<dyn Error>> {
-    let mut  log_path = get_exe_path();
+    let mut log_path = get_exe_path();
     log_path.push("logs");
     let file_appender = RollingFileAppender::new(Rotation::DAILY, log_path, "prefix.log");
-    tracing_subscriber::fmt()
-        .with_writer(file_appender)
-        .with_max_level(tracing::Level::INFO)  // 设置日志级别
-        .init();
+
+    if cfg!(debug_assertions) {
+        // 在 debug 模式下，只打印到控制台
+        tracing_subscriber::fmt()
+            .with_max_level(tracing::Level::INFO)  // 设置日志级别
+            .init();
+    } else {
+        // 在 release 模式下，打印到文件
+        tracing_subscriber::fmt()
+            .with_writer(file_appender)
+            .with_max_level(tracing::Level::INFO)  // 设置日志级别
+            .init();
+    }
+
     Ok(())
 }
-
 fn get_exe_path() -> PathBuf {
     let current_dir = env::current_exe().expect("Failed to get current exe path");
     let  log_path = PathBuf::from(current_dir.parent().expect("Failed to get parent directory"));
