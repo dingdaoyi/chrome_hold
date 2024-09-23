@@ -23,7 +23,7 @@ jobs:
         run: cargo build --release --target x86_64-pc-windows-msvc
       - name: Archive artifacts
         run: |
-          copy .\target\x86_64-pc-windows-msvc\release\chrome_hold.exe .\
+          copy .\target\x86_64-pc-windows-msvc\release\hrme_hold.exe .\
           tar -czvf chrome_hold.tar.gz  chromeHoldService.xml chromeHoldService.exe hrme_hold.exe start_bat.bat
         if: success()
 
