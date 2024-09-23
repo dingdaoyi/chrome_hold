@@ -1,6 +1,6 @@
 [package]
 #linux中名称问题,需要避免chrome
-name = "hrome_hold"
+name = "hrme_hold"
 version = "0.1.0"
 edition = "2021"
 
