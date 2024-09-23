@@ -171,25 +171,29 @@ fn start_chrome() {
             }
         }
     }
-
     #[cfg(target_os = "windows")]
     {
         let mut script_path = get_exe_path();
         script_path.push("start_bat.bat");
-        info!("脚本路径为:{:?}",&script_path);
+        info!("脚本路径为:{:?}", &script_path);
+
         let output = Command::new("cmd")
             .args(&["/C", script_path.to_str().expect("Invalid script path")])
             .output();
+
         match output {
             Ok(output) => {
+                info!("stdout: {:?}", String::from_utf8_lossy(&output.stdout));
+                info!("stderr: {:?}", String::from_utf8_lossy(&output.stderr));
+
                 if output.status.success() {
                     info!("Chrome 启动成功");
                 } else {
-                    info!("Chrome 启动失败");
+                    error!("Chrome 启动失败，退出代码: {:?}", output.status.code());
                 }
             }
             Err(err) => {
-                info!("启动 Chrome 失败: {:?}", err);
+                error!("启动 Chrome 失败: {:?}", err);
             }
         }
     }
