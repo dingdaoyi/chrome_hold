@@ -1,18 +1,24 @@
 use std::env;
 use std::error::Error;
+use std::fs::File;
 use std::process::Command;
 use std::sync::OnceLock;
 use std::time::Duration;
 use axum::extract::State;
 use axum::Router;
 use axum::routing::get;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
 use tokio::time::{Instant, sleep};
 use tracing::info;
+use tracing::log::LevelFilter;
+use tracing_subscriber::filter::Builder;
+use tracing_appender::rolling::{RollingFileAppender, Rotation};
+
 static AUTH_CONFIG: OnceLock<Sender<Instant>> = OnceLock::new();
+
 pub async fn start() -> Result<(), Box<dyn Error>> {
     setup_logger().await?;
 
@@ -60,7 +66,6 @@ async fn restart_chrome() {
 }
 
 
-
 async fn ping() -> String {
     let last_ping = Instant::now();
     AUTH_CONFIG.get().unwrap()
@@ -69,10 +74,22 @@ async fn ping() -> String {
     return "pong".to_string();
 }
 
+
 async fn setup_logger() -> Result<(), Box<dyn Error>> {
-    env::set_var("RUST_LOG", "info");
-    tracing_subscriber::fmt::init();
+    let mut  log_path = get_exe_path();
+    log_path.push("logs");
+    let file_appender = RollingFileAppender::new(Rotation::DAILY, log_path, "prefix.log");
+    tracing_subscriber::fmt()
+        .with_writer(file_appender)
+        .with_max_level(tracing::Level::INFO)  // 设置日志级别
+        .init();
     Ok(())
+}
+
+fn get_exe_path() -> PathBuf {
+    let current_dir = env::current_exe().expect("Failed to get current exe path");
+    let  log_path = PathBuf::from(current_dir.parent().expect("Failed to get parent directory"));
+    log_path
 }
 
 fn close_chrome() {
@@ -109,7 +126,6 @@ fn close_chrome() {
 }
 
 
-
 fn start_chrome() {
     #[cfg(target_os = "macos")]
     {
@@ -134,13 +150,12 @@ fn start_chrome() {
 
     #[cfg(target_os = "windows")]
     {
-        let current_dir = env::current_exe().expect("Failed to get current exe path");
-        let mut script_path = PathBuf::from(current_dir.parent().expect("Failed to get parent directory"));
+        let mut script_path = get_exe_path();
         script_path.push("start_bat.bat");
+        info!("脚本路径为:{}",&script_path);
         let output = Command::new("cmd")
             .args(&["/C", script_path.to_str().expect("Invalid script path")])
             .output();
-
         match output {
             Ok(output) => {
                 if output.status.success() {
