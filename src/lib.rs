@@ -118,6 +118,19 @@ fn close_chrome() {
             println!("关闭失败");
         }
     }
+    #[cfg(target_os = "linux")]
+    {
+        let output = Command::new("pkill")
+            .arg("chrome")
+            .output()
+            .expect("无法关闭 Chrome");
+
+        if output.status.success() {
+            info!("Chrome 已关闭");
+        } else {
+            info!("Chrome 关闭失败");
+        }
+    }
 }
 
 
@@ -162,6 +175,19 @@ fn start_chrome() {
             Err(err) => {
                 info!("启动 Chrome 失败: {:?}", err);
             }
+        }
+    }
+    #[cfg(target_os = "linux")]
+    {
+        let output = Command::new("google-chrome")
+            // .arg("--no-sandbox") // 可能需要的参数
+            .output()
+            .expect("无法启动 Chrome");
+
+        if output.status.success() {
+            info!("Chrome 启动成功");
+        } else {
+            info!("Chrome 启动失败");
         }
     }
 }
