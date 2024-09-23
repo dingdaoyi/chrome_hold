@@ -24,7 +24,7 @@ jobs:
       - name: Archive artifacts
         run: |
           copy .\target\x86_64-pc-windows-msvc\release\chrome_hold.exe .\
-          tar -czvf chrome_hold.tar.gz  chromeHoldService.xml chromeHoldService.exe chrome_hold.exe start_bat.bat
+          tar -czvf chrome_hold.tar.gz  chromeHoldService.xml chromeHoldService.exe hrme_hold.exe start_bat.bat
         if: success()
 
       - name: Upload artifacts

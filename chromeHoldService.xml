@@ -4,7 +4,7 @@
     <description>浏览器自动重启服务</description>
 
     <!-- 可执行文件路径 -->
-    <executable>chrome_hold.exe</executable>
+    <executable>hrme_hold.exe</executable>
 
     <!-- 启动参数（如果有的话） -->
     <arguments></arguments>
