@@ -10,7 +10,7 @@ use axum::http::Method;
 use tokio::sync::mpsc;
 use tokio::sync::mpsc::Sender;
 use tokio::time::{Instant, sleep};
-use tracing::info;
+use tracing::{error, info};
 use tracing_appender::rolling::{RollingFileAppender, Rotation};
 use tower_http::cors::{Any, CorsLayer};
 
@@ -193,16 +193,21 @@ fn start_chrome() {
             }
         }
     }
-    #[cfg(target_os = "linux")]
+    // #[cfg(target_os = "linux")]
     {
-        let output = Command::new("google-chrome")
-            .output()
-            .expect("无法启动 Chrome");
-
-        if output.status.success() {
-            info!("Chrome 启动成功");
-        } else {
-            info!("Chrome 启动失败");
+        let child = Command::new("google-chrome")
+            .spawn();
+        match child {
+            Ok(child) => {
+                if child.id() > 0 {
+                    info!("Chrome 启动成功，进程 ID: {}", child.id());
+                } else {
+                    error!("Chrome 启动失败:{:?}",child.stdout);
+                }
+            }
+            Err(msg) => {
+                info!("Chrome 启动失败:{:?}",msg);
+            }
         }
     }
 }
