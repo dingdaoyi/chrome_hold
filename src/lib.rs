@@ -121,14 +121,15 @@ fn close_chrome() {
     #[cfg(target_os = "linux")]
     {
         let output = Command::new("pkill")
+            .arg("-TERM") // 使用 SIGTERM
             .arg("chrome")
             .output()
             .expect("无法关闭 Chrome");
 
         if output.status.success() {
-            info!("Chrome 已关闭");
+            info!("Chrome 已正常关闭");
         } else {
-            info!("Chrome 关闭失败");
+            info!("Chrome 关闭失败，退出代码: {}", output.status.code().unwrap_or(-1));
         }
     }
 }
