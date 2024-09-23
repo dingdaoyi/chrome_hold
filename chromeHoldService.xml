@@ -15,4 +15,5 @@
     <!-- 日志输出路径 -->
     <logpath>logs</logpath>
     <logmode>roll</logmode>
+    <serviceaccount>LocalSystem</serviceaccount>
 </service>
