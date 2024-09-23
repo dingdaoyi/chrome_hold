@@ -196,7 +196,6 @@ fn start_chrome() {
     #[cfg(target_os = "linux")]
     {
         let output = Command::new("google-chrome")
-            .arg("--no-sandbox") // 可能需要的参数
             .output()
             .expect("无法启动 Chrome");
 
