@@ -183,8 +183,12 @@ fn start_chrome() {
 
         match output {
             Ok(output) => {
-                info!("stdout: {:?}", String::from_utf8_lossy(&output.stdout));
-                info!("stderr: {:?}", String::from_utf8_lossy(&output.stderr));
+                // 将 stdout 和 stderr 从 GBK 编码转换为 UTF-8
+                let (stdout, _, _) = encoding_rs::GBK.decode(&output.stdout);
+                let (stderr, _, _) = encoding_rs::GBK.decode(&output.stderr);
+
+                info!("stdout: {:?}", stdout);
+                info!("stderr: {:?}", stderr);
 
                 if output.status.success() {
                     info!("Chrome 启动成功");
