@@ -18,7 +18,7 @@ static AUTH_CONFIG: OnceLock<Sender<Instant>> = OnceLock::new();
 
 pub async fn start() -> Result<(), Box<dyn Error>> {
     setup_logger().await?;
-
+    println!("本程序是判断浏览器卡死的程序,机器人自动运行期间请不要关闭!");
     let listener = tokio::net::TcpListener::bind("127.0.0.1:7724").await.unwrap();
     info!("服务启动成功:127.0.0.1:7724");
 
@@ -128,9 +128,9 @@ fn close_chrome() {
             .expect("没有删除掉");
 
         if output.status.success() {
-            println!("关闭成功");
+            info!("关闭成功");
         } else {
-            println!("关闭失败");
+            info!("关闭失败");
         }
     }
     #[cfg(target_os = "linux")]
